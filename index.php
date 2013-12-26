@@ -1,5 +1,6 @@
 <?php
 $dir = '../';
+$users = array();
 init();
 authenticate();
 wrapUp();
@@ -31,13 +32,15 @@ HTML;
 
 function authenticate() {
 	global $dir;
+	global $users;
+	getListOfAuthenticatedUsers();
 	if(isset($_SESSION["authenticated"])) {
 		displayDirectoryStructure($dir);
 	}
 	else if(isset($_POST["username"]) && isset($_POST["password"])) {
 		$username = $_POST["username"];
 		$password = $_POST["password"];
-		if($username=="vishnu" && $password=="password") {
+		if(array_key_exists($username, $users) && $users[$username]==$password) {
 			$_SESSION["authenticated"]=true;
 			displayDirectoryStructure($dir);
 		}
@@ -47,6 +50,18 @@ function authenticate() {
 	}
 	else {
 		displayLoginBox();
+	}
+}
+
+function getListOfAuthenticatedUsers() {
+	$content = file_get_contents('./users.txt');
+	$parsedContent = explode("\n", $content);
+	global $users;
+	foreach($parsedContent as $userDetail) {
+		$details = explode(":",$userDetail);
+		if($details[0]!="") {
+			$users[$details[0]] = $details[1];
+		}
 	}
 }
 

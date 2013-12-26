@@ -1,12 +1,10 @@
 <?php
 $dir = '../';
 init();
-displayLoginBox();
-displayStructure($dir);
+authenticate();
 wrapUp();
 
 function init() {
-	echo "<script>console.log('tada');</script>";
 	ini_set('display_errors',1);
 	ini_set('display_startup_errors',1);
 	error_reporting(-1);
@@ -30,9 +28,26 @@ function wrapUp() {
 HTML;
 }
 
+function authenticate() {
+	if(isset($_POST["username"]) && isset($_POST["password"])) {
+		$username = $_POST["username"];
+		$password = $_POST["password"];
+		global $dir;
+		if($username=="vishnu" && $password=="password") {
+			displayDirectoryStructure($dir);
+		}
+		else {
+			displayLoginBox();
+		}
+	}
+	else {
+		displayLoginBox();
+	}
+}
+
 function displayLoginBox() {
 	echo <<<'HTML'
-	<form class="form-horizontal">
+	<form class="form-horizontal" action="index.php" method="post">
 		<div class="form-group">
 			<label for="inputUsername" class="col-sm-2 control-label">Username</label>
 			<div class="col-sm-4">
@@ -54,7 +69,7 @@ function displayLoginBox() {
 HTML;
 }
 
-function displayStructure($dir) {
+function displayDirectoryStructure($dir) {
 	$files = scandir($dir);
 	foreach($files as $file) {
 		echo "<a href='".$dir.$file."'>".$file."</a><br>";

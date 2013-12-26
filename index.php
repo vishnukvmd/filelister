@@ -9,6 +9,7 @@ function init() {
 	ini_set('display_startup_errors',1);
 	error_reporting(-1);
 
+	session_start();
 	echo <<<'HTML'
 	<html>
 		<head>
@@ -29,11 +30,15 @@ HTML;
 }
 
 function authenticate() {
-	if(isset($_POST["username"]) && isset($_POST["password"])) {
+	global $dir;
+	if(isset($_SESSION["authenticated"])) {
+		displayDirectoryStructure($dir);
+	}
+	else if(isset($_POST["username"]) && isset($_POST["password"])) {
 		$username = $_POST["username"];
 		$password = $_POST["password"];
-		global $dir;
 		if($username=="vishnu" && $password=="password") {
+			$_SESSION["authenticated"]=true;
 			displayDirectoryStructure($dir);
 		}
 		else {
